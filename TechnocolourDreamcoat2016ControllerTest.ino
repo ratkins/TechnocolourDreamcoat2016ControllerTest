@@ -3,6 +3,7 @@
 
 #include "Matrix.h"
 #include "Chase.h"
+#include "Plasma.h"
 
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
@@ -33,6 +34,7 @@ bool upButton = false;
 
 // Effects
 Chase chase(leds);
+Plasma plasma(leds);
 
 void setup() {
   Serial.begin(9600);
@@ -77,7 +79,8 @@ void loop() {
   updateSpectrumValues();
 
   fill_solid(leds, kNumLeds, CRGB::Black);
-  chase.draw(controls);
+//  chase.draw(controls);
+  plasma.draw(controls);
 
 // simple chase test pattern
 //  fill_solid(leds, kNumLeds, CRGB::Black);
