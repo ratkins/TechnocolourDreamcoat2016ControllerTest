@@ -1,5 +1,4 @@
-#ifndef Chase_h
-#define Chase_h
+#pragma once
 
 #include <FastLED.h>
 #include "Matrix.h"
@@ -18,5 +17,3 @@ class Chase : public Effect {
     }
     
 };
-
-#endif

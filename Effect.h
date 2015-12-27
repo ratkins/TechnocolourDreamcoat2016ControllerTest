@@ -1,5 +1,4 @@
-#ifndef Effect_h
-#define Effect_h
+#pragma once
 
 //
 // Base class for effect instances
@@ -27,5 +26,3 @@ class Effect {
     virtual void draw(Controls controls) = 0;
     
 };
-
-#endif

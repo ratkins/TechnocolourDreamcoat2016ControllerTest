@@ -1,5 +1,6 @@
-#include <FastLED.h>
+#pragma once
 
+#include <FastLED.h>
 #include "Matrix.h"
 #include "Effect.h"
 
