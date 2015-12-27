@@ -1,3 +1,6 @@
+#ifndef Effect_h
+#define Effect_h
+
 //
 // Matrix.h
 //
@@ -92,3 +95,5 @@ uint16_t XY(uint16_t x, uint16_t y) {
     return j;
 
 }
+
+#endif

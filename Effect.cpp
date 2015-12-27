@@ -1,8 +1,11 @@
+#ifndef Effect_h
+#define Effect_h
+
 //
 // Base class for effect instances
 //
 
-#include <FastLED.h>
+#include "FastLED.h"
 
 struct Controls {
     
@@ -24,3 +27,5 @@ class Effect {
     virtual void draw(Controls controls) = 0;
     
 };
+
+#endif
