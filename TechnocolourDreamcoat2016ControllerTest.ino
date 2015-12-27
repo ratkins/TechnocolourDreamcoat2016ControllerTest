@@ -1,19 +1,11 @@
 #include <FastLED.h>
 #include <Bounce2.h>
 
+#include "Matrix.h"
+
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
-const uint8_t kMatrixWidth = 16;
-const uint8_t kMatrixHeight = 8;
-const uint16_t kNumLeds = kMatrixWidth * kMatrixHeight;
-const uint8_t columnHeights[kNumLeds] = {
-  20, 20, 20, 20, 18, 18, 18, 14, 12, 
-  12, 14, 20, 20, 20, 20, 18, 18, 18, 
-  18, 18, 18, 20, 20, 20, 20, 14, 12, 
-  12, 14, 18, 18, 18, 20, 20, 20, 20
-};
-CRGB ledsWithSafety[kNumLeds + 1];
-CRGB* const leds(ledsWithSafety + 1);
+CRGB leds[kNumLeds];
 
 const int analogPin = 14; // read from multiplexer using analog input 0
 const int strobePin = 15; // strobe is attached to digital pin 2
@@ -80,17 +72,35 @@ void loop() {
   updateMasterBrightness();
   updateButtonValues();
   updateSpectrumValues();
-  
+
+// simple chase test pattern
 //  fill_solid(leds, kNumLeds, CRGB::Black);
+//  static uint16_t i = 0;
+//  leds[i++] = CRGB::White;
+//  if (i == kNumLeds) {
+//    i = 0;
+//  }
 
-  fadeToBlackBy(leds, kNumLeds, 16);
+// Line rising up from bottom to top
+  fill_solid(leds, kNumLeds, CRGB::Black);
+  static uint16_t y = 0;
 
-  for (int y = 0; y < spectrumBands; y++) {
-    uint8_t vol = map(spectrumValue[y], 0, 1023, 0, 15);
-    for (int x = 0; x < vol; x++) {
-      leds[XY(vol, y)] = CRGB(255, 255, 255);        
-    }
+  for (int x = 0; x < kMatrixWidth; x++) {
+    leds[XY(x, y)] = CRGB::White;
   }
+  if (++y == kMatrixHeight) {
+    y = 0;
+  }
+
+// Basic MSEQ7 output
+//  fadeToBlackBy(leds, kNumLeds, 16);
+//
+//  for (int y = 0; y < spectrumBands; y++) {
+//    uint8_t vol = map(spectrumValue[y], 0, 1023, 0, 15);
+//    for (int x = 0; x < vol; x++) {
+//      leds[XY(vol, y)] = CRGB(255, 255, 255);
+//    }
+//  }
 
   if (controlButton) {
     fill_solid(leds, kNumLeds, CRGB::Blue);
@@ -150,30 +160,6 @@ void updateMasterBrightness() {
   uint8_t masterBrightness = map(analogRead(brightnessPotPin), 0, 1023, 0, 255);
   FastLED.setBrightness(masterBrightness);
   Serial.print("brightness pot = "); Serial.println(masterBrightness);  
-}
-
-bool visible(uint8_t x, uint8_t y) {
-  return x >= 0 && y >= 0 && x < kMatrixWidth && y < columnHeights[x];
-}
-
-int16_t maxY(uint8_t x) {
-    return columnHeights[x];
-}
-
-uint16_t XY(uint8_t x, uint8_t y) {
-    if (visible(x, y)) {
-        uint16_t sum = 0;
-        for (uint8_t i = 0; i < x; i++) {
-          sum += columnHeights[i];
-        }
-        if (x & 0x01) {
-            return leds[sum + columnHeights[x] - y - 1];
-        } else {
-            return leds[sum + y];
-        }
-    } else {
-        return -1; // the zeroth element of ledsWithSafety
-    } 
 }
 
 void register_marks() {
