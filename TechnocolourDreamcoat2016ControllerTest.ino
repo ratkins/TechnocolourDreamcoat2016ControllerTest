@@ -77,7 +77,8 @@ void loop() {
   updateButtonValues();
   updateSpectrumValues();
 
-//  chase.draw(controls);
+  fill_solid(leds, kNumLeds, CRGB::Black);
+  chase.draw(controls);
 
 // simple chase test pattern
 //  fill_solid(leds, kNumLeds, CRGB::Black);
