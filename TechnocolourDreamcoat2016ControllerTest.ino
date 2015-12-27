@@ -1,12 +1,19 @@
 #include <FastLED.h>
 #include <Bounce2.h>
 
-#define NUM_LEDS 128
-#define LED_PIN 0
+const uint8_t ledPin = 0;
+const uint8_t maxPowerLedPin = 13;
 const uint8_t kMatrixWidth = 16;
 const uint8_t kMatrixHeight = 8;
-CRGB leds[NUM_LEDS];
-const bool kMatrixSerpentineLayout = true;
+const uint16_t kNumLeds = kMatrixWidth * kMatrixHeight;
+const uint8_t columnHeights[kNumLeds] = {
+  20, 20, 20, 20, 18, 18, 18, 14, 12, 
+  12, 14, 20, 20, 20, 20, 18, 18, 18, 
+  18, 18, 18, 20, 20, 20, 20, 14, 12, 
+  12, 14, 18, 18, 18, 20, 20, 20, 20
+};
+CRGB ledsWithSafety[kNumLeds + 1];
+CRGB* const leds(ledsWithSafety + 1);
 
 const int analogPin = 14; // read from multiplexer using analog input 0
 const int strobePin = 15; // strobe is attached to digital pin 2
@@ -37,8 +44,6 @@ void setup() {
 
   delay(2000);
   
-  pinMode(LED_PIN, OUTPUT);
-
   pinMode(brightnessPotPin, INPUT);
   
   pinMode(controlButtonPin, INPUT_PULLUP);
@@ -53,9 +58,14 @@ void setup() {
   upBounce.attach(upButtonPin);
   upBounce.interval(5);
   
-  FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
-  FastLED.setBrightness(128);
+  FastLED.addLeds<WS2812B, ledPin, GRB>(leds, kNumLeds);
+//  FastLED.setBrightness(32);
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 2000);
+  pinMode(ledPin, OUTPUT);
+  set_max_power_indicator_LED(maxPowerLedPin);
   
+  pinMode(maxPowerLedPin, OUTPUT);
+    
   pinMode(analogPin, INPUT);
   pinMode(strobePin, OUTPUT);
   pinMode(resetPin, OUTPUT);
@@ -71,24 +81,28 @@ void loop() {
   updateButtonValues();
   updateSpectrumValues();
   
-  fill_solid(leds, NUM_LEDS, CRGB::Black);
+//  fill_solid(leds, kNumLeds, CRGB::Black);
+
+  fadeToBlackBy(leds, kNumLeds, 16);
 
   for (int y = 0; y < spectrumBands; y++) {
     uint8_t vol = map(spectrumValue[y], 0, 1023, 0, 15);
-    leds[XY(vol, y)] = CRGB(255, 255, 255);  
+    for (int x = 0; x < vol; x++) {
+      leds[XY(vol, y)] = CRGB(255, 255, 255);        
+    }
   }
 
   if (controlButton) {
-    fill_solid(leds, NUM_LEDS, CRGB::Blue);
+    fill_solid(leds, kNumLeds, CRGB::Blue);
   }
   if (upButton) {
-    fill_solid(leds, NUM_LEDS, CRGB::Green);
+    fill_solid(leds, kNumLeds, CRGB::Green);
   }
   if (downButton) {
-    fill_solid(leds, NUM_LEDS, CRGB::Red);
+    fill_solid(leds, kNumLeds, CRGB::Red);
   }
 
-  register_marks();    
+//  register_marks();    
   
   Serial.println();
   FastLED.show();
@@ -138,26 +152,28 @@ void updateMasterBrightness() {
   Serial.print("brightness pot = "); Serial.println(masterBrightness);  
 }
 
-uint16_t XY( uint8_t x, uint8_t y)
-{
-  uint16_t i;
-  
-  if( kMatrixSerpentineLayout == false) {
-    i = (y * kMatrixWidth) + x;
-  }
+bool visible(uint8_t x, uint8_t y) {
+  return x >= 0 && y >= 0 && x < kMatrixWidth && y < columnHeights[x];
+}
 
-  if( kMatrixSerpentineLayout == true) {
-    if( y & 0x01) {
-      // Odd rows run backwards
-      uint8_t reverseX = (kMatrixWidth - 1) - x;
-      i = (y * kMatrixWidth) + reverseX;
+int16_t maxY(uint8_t x) {
+    return columnHeights[x];
+}
+
+uint16_t XY(uint8_t x, uint8_t y) {
+    if (visible(x, y)) {
+        uint16_t sum = 0;
+        for (uint8_t i = 0; i < x; i++) {
+          sum += columnHeights[i];
+        }
+        if (x & 0x01) {
+            return leds[sum + columnHeights[x] - y - 1];
+        } else {
+            return leds[sum + y];
+        }
     } else {
-      // Even rows run forwards
-      i = (y * kMatrixWidth) + x;
-    }
-  }
-  
-  return i;
+        return -1; // the zeroth element of ledsWithSafety
+    } 
 }
 
 void register_marks() {
