@@ -2,6 +2,7 @@
 #include <Bounce2.h>
 
 #include "Matrix.h"
+#include "Effect.cpp"
 
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
@@ -10,8 +11,8 @@ CRGB leds[kNumLeds];
 const int analogPin = 14; // read from multiplexer using analog input 0
 const int strobePin = 15; // strobe is attached to digital pin 2
 const int resetPin = 12; // reset is attached to digital pin 3
-const int spectrumBands = 7;
-int spectrumValue[spectrumBands]; // to hold a2d values
+
+Controls controls;
 
 // Master brightness pot
 const int brightnessPotPin = 16;
@@ -19,7 +20,6 @@ const int brightnessPotPin = 16;
 // Control (blue) button
 const int controlButtonPin = 18;
 Bounce controlBounce = Bounce();
-bool controlButton = false;
 
 // Down (red) button
 const int downButtonPin = 19;
@@ -52,7 +52,7 @@ void setup() {
   
   FastLED.addLeds<WS2812B, ledPin, GRB>(leds, kNumLeds);
 //  FastLED.setBrightness(32);
-  FastLED.setMaxPowerInVoltsAndMilliamps(5, 2000);
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 4000);
   pinMode(ledPin, OUTPUT);
   set_max_power_indicator_LED(maxPowerLedPin);
   
@@ -82,7 +82,7 @@ void loop() {
 //  }
 
 // Line rising up from bottom to top
-  fill_solid(leds, kNumLeds, CRGB::Black);
+  fadeToBlackBy(leds, kNumLeds, 16);
   static uint16_t y = 0;
 
   for (int x = 0; x < kMatrixWidth; x++) {
@@ -102,7 +102,7 @@ void loop() {
 //    }
 //  }
 
-  if (controlButton) {
+  if (controls.button) {
     fill_solid(leds, kNumLeds, CRGB::Blue);
   }
   if (upButton) {
@@ -121,29 +121,29 @@ void loop() {
 void updateSpectrumValues() {
   digitalWrite(resetPin, HIGH);
   digitalWrite(resetPin, LOW);  
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < Controls::spectrumBandsCount; i++) {
     digitalWrite(strobePin, LOW);
     delayMicroseconds(30); // to allow the output to settle
-    spectrumValue[i] = analogRead(analogPin);
+    controls.spectrumBands[i] = analogRead(analogPin);
     digitalWrite(strobePin, HIGH);    
   }
 // comment out/remove the serial stuff to go faster
 // - its just here for show
-//    if (spectrumValue[i] < 10) {
+//    if (controls.spectrumBands[i] < 10) {
 //      Serial.print(" ");
-//      Serial.print(spectrumValue[i]);
-//    } else if (spectrumValue[i] < 100 ) {
+//      Serial.print(controls.spectrumBands[i]);
+//    } else if (controls.spectrumBands[i] < 100 ) {
 //      Serial.print(" ");
-//      Serial.print(spectrumValue[i]);
+//      Serial.print(controls.spectrumBands[i]);
 //    } else {
 //      Serial.print(" ");
-//      Serial.print(spectrumValue[i]);
+//      Serial.print(controls.spectrumBands[i]);
 //    }
 }
 
 void updateButtonValues() {
   controlBounce.update();
-  controlButton = controlBounce.read() == LOW;
+  controls.button = controlBounce.read() == LOW;
   
   upBounce.update();
   upButton = upBounce.read() == LOW;
@@ -151,7 +151,7 @@ void updateButtonValues() {
   downBounce.update();
   downButton = downBounce.read() == LOW;
 
-  Serial.print("control button = "); Serial.println(controlButton);
+  Serial.print("control button = "); Serial.println(controls.button);
   Serial.print("     up button = "); Serial.println(upButton);
   Serial.print("   down button = "); Serial.println(downButton);
 }
