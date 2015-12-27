@@ -1,9 +1,6 @@
 #include <FastLED.h>
 #include <Bounce2.h>
 
-#include "Matrix.h"
-#include "Effect.cpp"
-
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
 CRGB leds[kNumLeds];
@@ -30,6 +27,9 @@ bool downButton = false;
 const int upButtonPin = 20;
 Bounce upBounce = Bounce();
 bool upButton = false;
+
+// Effects
+Chase chase(leds);
 
 void setup() {
   Serial.begin(9600);
@@ -73,6 +73,8 @@ void loop() {
   updateButtonValues();
   updateSpectrumValues();
 
+//  chase.draw(controls);
+
 // simple chase test pattern
 //  fill_solid(leds, kNumLeds, CRGB::Black);
 //  static uint16_t i = 0;
@@ -82,15 +84,15 @@ void loop() {
 //  }
 
 // Line rising up from bottom to top
-  fadeToBlackBy(leds, kNumLeds, 16);
-  static uint16_t y = 0;
-
-  for (int x = 0; x < kMatrixWidth; x++) {
-    leds[XY(x, y)] = CRGB::White;
-  }
-  if (++y == kMatrixHeight) {
-    y = 0;
-  }
+//  fadeToBlackBy(leds, kNumLeds, 16);
+//  static uint16_t y = 0;
+//
+//  for (int x = 0; x < kMatrixWidth; x++) {
+//    leds[XY(x, y)] = CRGB::White;
+//  }
+//  if (++y == kMatrixHeight) {
+//    y = 0;
+//  }
 
 // Basic MSEQ7 output
 //  fadeToBlackBy(leds, kNumLeds, 16);
