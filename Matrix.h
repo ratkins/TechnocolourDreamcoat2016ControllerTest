@@ -1,5 +1,5 @@
-#ifndef Effect_h
-#define Effect_h
+#ifndef Matrix_h
+#define Matrix_h
 
 //
 // Matrix.h

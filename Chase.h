@@ -1,6 +1,9 @@
+#ifndef Chase_h
+#define Chase_h
+
 #include <FastLED.h>
 #include "Matrix.h"
-#include "Effect.cpp"
+#include "Effect.h"
 
 class Chase : public Effect {
   
@@ -15,3 +18,5 @@ class Chase : public Effect {
     }
     
 };
+
+#endif

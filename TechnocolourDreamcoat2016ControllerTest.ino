@@ -1,6 +1,10 @@
 #include <FastLED.h>
 #include <Bounce2.h>
 
+#include "Matrix.h"
+#include "Effect.h"
+#include "Chase.h"
+
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
 CRGB leds[kNumLeds];
