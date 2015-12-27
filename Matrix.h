@@ -14,25 +14,30 @@
 //               12, 14, 18, 18, 18, 20, 20, 20, 20
 //               ]
 //
-//func matrix(heights: [Int], maxHeight: Int) -> String {
+//func generateMatrix(heights: [Int], maxHeight: Int) -> String {
 //    var visibleIdx = 0
 //    var hiddenIdx = 640
 //    var output = ""
 //    
-//    for height in heights {
+//    for (idx, height) in heights.enumerate() {
+//        var line = ""
 //        for h in 0..<maxHeight {
 //            if h < height {
-//                output += String(format: "%4d,", visibleIdx++)
+//                if idx % 2 == 0 {
+//                    line = line + String(format: "%4d,", visibleIdx++)
+//                } else {
+//                    line = String(format: "%4d,", visibleIdx++) + line
+//                }
 //            } else {
-//                output += String(format: "%4d,", hiddenIdx++)
+//                line += String(format: "%4d,", hiddenIdx++)
 //            }
 //        }
-//        output += "\n"
+//        output += line + "\n"
 //    }
 //    return output
 //}
 //
-//print(matrix(heights, maxHeight: 20))
+//print(generateMatrix(heights, maxHeight: 20))
 
 const uint8_t kMatrixWidth = 36;
 const uint8_t kMatrixHeight = 20;
