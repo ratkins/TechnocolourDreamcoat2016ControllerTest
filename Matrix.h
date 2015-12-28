@@ -13,4 +13,4 @@ const uint16_t kNumLeds = kMatrixWidth * kMatrixHeight;
 
 extern const uint16_t matrix[kNumLeds];
 
-static inline uint16_t XY(uint8_t x, uint8_t y) { return matrix[(x * kMatrixHeight) + y]; }
+extern uint16_t XY(uint8_t x, uint8_t y);

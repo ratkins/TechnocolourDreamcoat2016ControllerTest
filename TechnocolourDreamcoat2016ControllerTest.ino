@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "Chase.h"
 #include "Plasma.h"
+#include "Snake.h"
 
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
@@ -35,6 +36,7 @@ bool upButton = false;
 // Effects
 Chase chase(leds);
 Plasma plasma(leds);
+Snake snake(leds);
 
 //
 // Prototypes, required by Arduino-1.6.7
@@ -42,7 +44,6 @@ Plasma plasma(leds);
 void updateMasterBrightness();
 void updateButtonValues();
 void updateSpectrumValues();
-
 
 void setup() {
   Serial.begin(9600);
@@ -87,8 +88,9 @@ void loop() {
   updateSpectrumValues();
 
   fill_solid(leds, kNumLeds, CRGB::Black);
-  chase.draw(controls);
+//  chase.draw(controls);
 //  plasma.draw(controls);
+  snake.draw(controls);
 
 // simple chase test pattern
 //  fill_solid(leds, kNumLeds, CRGB::Black);

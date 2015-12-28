@@ -81,3 +81,7 @@ const uint16_t matrix[kNumLeds] = {
     639, 638, 637, 636, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 623, 622, 621, 620,
 
 };
+
+uint16_t XY(uint8_t x, uint8_t y) {
+    return matrix[(x * kMatrixHeight) + y];
+}
