@@ -36,6 +36,14 @@ bool upButton = false;
 Chase chase(leds);
 Plasma plasma(leds);
 
+//
+// Prototypes, required by Arduino-1.6.7
+//
+void updateMasterBrightness();
+void updateButtonValues();
+void updateSpectrumValues();
+
+
 void setup() {
   Serial.begin(9600);
 
@@ -79,8 +87,8 @@ void loop() {
   updateSpectrumValues();
 
   fill_solid(leds, kNumLeds, CRGB::Black);
-//  chase.draw(controls);
-  plasma.draw(controls);
+  chase.draw(controls);
+//  plasma.draw(controls);
 
 // simple chase test pattern
 //  fill_solid(leds, kNumLeds, CRGB::Black);
