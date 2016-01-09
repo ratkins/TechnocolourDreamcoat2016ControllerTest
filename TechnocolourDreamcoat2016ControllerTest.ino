@@ -38,12 +38,22 @@ Chase chase(leds);
 Plasma plasma(leds);
 Snake snake(leds);
 
+Effect* effects[] = {
+  &chase,
+  &plasma,
+  &snake,
+  NULL
+};
+uint8_t effectIndex = 0;
+uint8_t effectCount = 0;
+
 //
 // Prototypes, required by Arduino-1.6.7
 //
 void updateMasterBrightness();
 void updateButtonValues();
 void updateSpectrumValues();
+void updateCurrentPattern();
 
 void setup() {
   Serial.begin(9600);
@@ -54,18 +64,22 @@ void setup() {
   
   pinMode(controlButtonPin, INPUT_PULLUP);
   controlBounce.attach(controlButtonPin);
-  controlBounce.interval(5);
+  controlBounce.interval(50);
   
   pinMode(downButtonPin, INPUT_PULLUP);
   downBounce.attach(downButtonPin);
-  downBounce.interval(5);
+  downBounce.interval(50);
   
   pinMode(upButtonPin, INPUT_PULLUP);
   upBounce.attach(upButtonPin);
-  upBounce.interval(5);
-  
+  upBounce.interval(50);
+
+  while (effects[effectIndex++] != NULL) {
+    effectCount++;
+  }
+  effectIndex = 0;
+
   FastLED.addLeds<WS2812B, ledPin, GRB>(leds, kNumLeds);
-//  FastLED.setBrightness(32);
   FastLED.setMaxPowerInVoltsAndMilliamps(5, 4000);
   pinMode(ledPin, OUTPUT);
   set_max_power_indicator_LED(maxPowerLedPin);
@@ -82,15 +96,78 @@ void setup() {
 }
 
 void loop() {
-
   updateMasterBrightness();
-  updateButtonValues();
   updateSpectrumValues();
+  updateButtonValues();
+  updateCurrentPattern();
 
   fill_solid(leds, kNumLeds, CRGB::Black);
-//  chase.draw(controls);
-//  plasma.draw(controls);
-  snake.draw(controls);
+
+  effects[effectIndex]->draw(controls);
+
+  FastLED.show();
+}
+
+void updateSpectrumValues() {
+  digitalWrite(resetPin, HIGH);
+  digitalWrite(resetPin, LOW);  
+  for (int i = 0; i < Controls::spectrumBandsCount; i++) {
+    digitalWrite(strobePin, LOW);
+    delayMicroseconds(30); // to allow the output to settle
+    controls.spectrumBands[i] = analogRead(analogPin);
+    digitalWrite(strobePin, HIGH);    
+  }
+// comment out/remove the serial stuff to go faster
+// - its just here for show
+//    if (controls.spectrumBands[i] < 10) {
+//      Serial.print(" ");
+//      Serial.print(controls.spectrumBands[i]);
+//    } else if (controls.spectrumBands[i] < 100 ) {
+//      Serial.print(" ");
+//      Serial.print(controls.spectrumBands[i]);
+//    } else {
+//      Serial.print(" ");
+//      Serial.print(controls.spectrumBands[i]);
+//    }
+}
+
+void updateMasterBrightness() {
+  uint8_t masterBrightness = map(analogRead(brightnessPotPin), 0, 1023, 0, 255);
+  FastLED.setBrightness(masterBrightness);
+  Serial.print("brightness pot = "); Serial.println(masterBrightness);
+}
+
+void updateButtonValues() {
+  controlBounce.update();
+  controls.button = controlBounce.read() == LOW;
+  
+  upBounce.update();
+  upButton = upBounce.read() == LOW;
+  
+  downBounce.update();
+  downButton = downBounce.read() == LOW;
+
+  Serial.print("control button = "); Serial.println(controls.button);
+  Serial.print("     up button = "); Serial.println(upButton);
+  Serial.print("   down button = "); Serial.println(downButton);
+}
+
+void updateCurrentPattern() {
+  if (downButton && upButton) {
+    // special mode?
+  } else if (upButton) {
+    effectIndex = effectIndex == effectCount - 1 ? 0 : effectIndex + 1;
+  } else if (downButton) {
+    effectIndex = effectIndex == 0 ? effectCount - 1 : effectIndex - 1;
+  }
+}
+
+//void register_marks() {
+//  leds[XY(0, 0)] = CRGB::Red;
+//  leds[XY(kMatrixWidth - 1, 0)] = CRGB::Green;
+//  leds[XY(kMatrixWidth - 1, kMatrixHeight - 1)] = CRGB::Blue;
+//  leds[XY(0, kMatrixHeight - 1)] = CRGB::White;
+//}
 
 // simple chase test pattern
 //  fill_solid(leds, kNumLeds, CRGB::Black);
@@ -120,71 +197,4 @@ void loop() {
 //      leds[XY(vol, y)] = CRGB(255, 255, 255);
 //    }
 //  }
-
-  if (controls.button) {
-    fill_solid(leds, kNumLeds, CRGB::Blue);
-  }
-  if (upButton) {
-    fill_solid(leds, kNumLeds, CRGB::Green);
-  }
-  if (downButton) {
-    fill_solid(leds, kNumLeds, CRGB::Red);
-  }
-
-//  register_marks();    
-  
-  Serial.println();
-  FastLED.show();
-}
-
-void updateSpectrumValues() {
-  digitalWrite(resetPin, HIGH);
-  digitalWrite(resetPin, LOW);  
-  for (int i = 0; i < Controls::spectrumBandsCount; i++) {
-    digitalWrite(strobePin, LOW);
-    delayMicroseconds(30); // to allow the output to settle
-    controls.spectrumBands[i] = analogRead(analogPin);
-    digitalWrite(strobePin, HIGH);    
-  }
-// comment out/remove the serial stuff to go faster
-// - its just here for show
-//    if (controls.spectrumBands[i] < 10) {
-//      Serial.print(" ");
-//      Serial.print(controls.spectrumBands[i]);
-//    } else if (controls.spectrumBands[i] < 100 ) {
-//      Serial.print(" ");
-//      Serial.print(controls.spectrumBands[i]);
-//    } else {
-//      Serial.print(" ");
-//      Serial.print(controls.spectrumBands[i]);
-//    }
-}
-
-void updateButtonValues() {
-  controlBounce.update();
-  controls.button = controlBounce.read() == LOW;
-  
-  upBounce.update();
-  upButton = upBounce.read() == LOW;
-  
-  downBounce.update();
-  downButton = downBounce.read() == LOW;
-
-  Serial.print("control button = "); Serial.println(controls.button);
-  Serial.print("     up button = "); Serial.println(upButton);
-  Serial.print("   down button = "); Serial.println(downButton);
-}
-
-void updateMasterBrightness() {
-  uint8_t masterBrightness = map(analogRead(brightnessPotPin), 0, 1023, 0, 255);
-  FastLED.setBrightness(masterBrightness);
-  Serial.print("brightness pot = "); Serial.println(masterBrightness);  
-}
-
-void register_marks() {
-  leds[XY(0, 0)] = CRGB::Red;
-  leds[XY(kMatrixWidth - 1, 0)] = CRGB::Green;
-  leds[XY(kMatrixWidth - 1, kMatrixHeight - 1)] = CRGB::Blue;
-  leds[XY(0, kMatrixHeight - 1)] = CRGB::White;  
-}
 
