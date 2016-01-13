@@ -138,14 +138,17 @@ void updateMasterBrightness() {
 }
 
 void updateButtonValues() {
-  controlBounce.update();
-  controls.button = controlBounce.read() == LOW;
+  if (controlBounce.update()) {
+    controls.button = controlBounce.read() == LOW;
+  }
   
-  upBounce.update();
-  upButton = upBounce.read() == LOW;
-  
-  downBounce.update();
-  downButton = downBounce.read() == LOW;
+  if (upBounce.update()) {
+    upButton = upBounce.read() == LOW;
+  }
+
+  if (downBounce.update()) {
+    downButton = downBounce.read() == LOW;
+  }
 
   Serial.print("control button = "); Serial.println(controls.button);
   Serial.print("     up button = "); Serial.println(upButton);
