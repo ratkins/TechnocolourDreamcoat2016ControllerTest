@@ -4,6 +4,7 @@
 #include "Chase.h"
 #include "Plasma.h"
 #include "Snake.h"
+#include "Life.h"
 
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
@@ -38,11 +39,13 @@ bool upButton = false;
 Chase chase(leds);
 Plasma plasma(leds);
 Snake snake(leds);
+Life life(leds);
 
 Effect* effects[] = {
   &chase,
   &plasma,
   &snake,
+  &life,
   NULL
 };
 uint8_t effectIndex = 0;
@@ -106,21 +109,20 @@ void updateSpectrumValues() {
   for (int i = 0; i < Controls::spectrumBandsCount; i++) {
     digitalWrite(strobePin, LOW);
     delayMicroseconds(30); // to allow the output to settle
-    controls.spectrumBands[i] = analogRead(analogPin);
-    digitalWrite(strobePin, HIGH);    
-  }
+    controls.spectrumBands[i] = map(analogRead(analogPin), 0, 1023, 0, 255);
+    digitalWrite(strobePin, HIGH);
+
 // comment out/remove the serial stuff to go faster
 // - its just here for show
 //    if (controls.spectrumBands[i] < 10) {
 //      Serial.print(" ");
 //      Serial.print(controls.spectrumBands[i]);
-//    } else if (controls.spectrumBands[i] < 100 ) {
-//      Serial.print(" ");
-//      Serial.print(controls.spectrumBands[i]);
 //    } else {
-//      Serial.print(" ");
+//      Serial.print("  ");
 //      Serial.print(controls.spectrumBands[i]);
 //    }
+  }
+//  Serial.println();
 }
 
 void updateMasterBrightness() {
