@@ -1,5 +1,4 @@
 #include <FastLED.h>
-#include <Bounce2.h>
 
 #include "Matrix.h"
 #include "Chase.h"
@@ -19,18 +18,20 @@ Controls controls;
 // Master brightness pot
 const int brightnessPotPin = 16;
 
+const uint8_t debounceCount = 16;
+
 // Control (blue) button
-const int controlButtonPin = 18;
-Bounce controlBounce = Bounce();
+const uint8_t controlButtonPin = 18;
+uint8_t controlButtonDebounce = 0;
 
 // Down (red) button
-const int downButtonPin = 19;
-Bounce downBounce = Bounce();
+const uint8_t downButtonPin = 19;
+uint8_t downButtonDebounce = 0;
 bool downButton = false;
 
 // Up (green) button
-const int upButtonPin = 20;
-Bounce upBounce = Bounce();
+const uint8_t upButtonPin = 20;
+uint8_t upButtonDebounce = 0;
 bool upButton = false;
 
 // Effects
@@ -61,18 +62,9 @@ void setup() {
   delay(2000);
   
   pinMode(brightnessPotPin, INPUT);
-  
   pinMode(controlButtonPin, INPUT_PULLUP);
-  controlBounce.attach(controlButtonPin);
-  controlBounce.interval(50);
-  
   pinMode(downButtonPin, INPUT_PULLUP);
-  downBounce.attach(downButtonPin);
-  downBounce.interval(50);
-  
   pinMode(upButtonPin, INPUT_PULLUP);
-  upBounce.attach(upButtonPin);
-  upBounce.interval(50);
 
   while (effects[effectIndex++] != NULL) {
     effectCount++;
@@ -138,16 +130,26 @@ void updateMasterBrightness() {
 }
 
 void updateButtonValues() {
-  if (controlBounce.update()) {
-    controls.button = controlBounce.read() == LOW;
+  if (controlButtonDebounce == 0 && digitalRead(controlButtonPin) == LOW) {
+    controlButtonDebounce = debounceCount;
+    controls.button = true;
+  } else if (controlButtonDebounce > 0) {
+    controlButtonDebounce--;
+    controls.button = false;
   }
-  
-  if (upBounce.update()) {
-    upButton = upBounce.read() == LOW;
+  if (upButtonDebounce == 0 && digitalRead(upButtonPin) == LOW) {
+    upButtonDebounce = debounceCount;
+    upButton = true;
+  } else if (upButtonDebounce > 0) {
+    upButtonDebounce--;
+    upButton = false;
   }
-
-  if (downBounce.update()) {
-    downButton = downBounce.read() == LOW;
+  if (downButtonDebounce == 0 && digitalRead(downButtonPin) == LOW) {
+    downButtonDebounce = debounceCount;
+    downButton = true;
+  } else if (downButtonDebounce > 0) {
+    downButtonDebounce--;
+    downButton = false;
   }
 
   Serial.print("control button = "); Serial.println(controls.button);
