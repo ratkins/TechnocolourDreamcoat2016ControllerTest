@@ -5,6 +5,7 @@
 #include "Plasma.h"
 #include "Snake.h"
 #include "Life.h"
+#include "Starfield.h"
 
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
@@ -37,15 +38,17 @@ bool upButton = false;
 
 // Effects
 Chase chase(leds);
+Starfield starfield(leds);
 Plasma plasma(leds);
 Snake snake(leds);
 Life life(leds);
 
 Effect* effects[] = {
   &chase,
-  &plasma,
+  &starfield,
   &snake,
   &life,
+  &plasma,
   NULL
 };
 uint8_t effectIndex = 0;
