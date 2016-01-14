@@ -57,6 +57,7 @@ uint8_t effectCount = 0;
 void updateMasterBrightness();
 void updateButtonValues();
 void updateSpectrumValues();
+void debugSpectrumValues();
 void updateCurrentPattern();
 
 void setup() {
@@ -109,26 +110,48 @@ void updateSpectrumValues() {
   for (int i = 0; i < Controls::spectrumBandsCount; i++) {
     digitalWrite(strobePin, LOW);
     delayMicroseconds(30); // to allow the output to settle
-    controls.spectrumBands[i] = map(analogRead(analogPin), 0, 1023, 0, 255);
+    controls.rawSpectrumBands[i] = analogRead(analogPin);
+    controls.spectrumBands[i] = map(analogRead(analogPin), controls.spectrumBandsTrim[i], 1023, 0, 255);
     digitalWrite(strobePin, HIGH);
-
-// comment out/remove the serial stuff to go faster
-// - its just here for show
-//    if (controls.spectrumBands[i] < 10) {
-//      Serial.print(" ");
-//      Serial.print(controls.spectrumBands[i]);
-//    } else {
-//      Serial.print("  ");
-//      Serial.print(controls.spectrumBands[i]);
-//    }
   }
-//  Serial.println();
+//  debugSpectrumValues();
+}
+
+void debugSpectrumValues() {
+/*
+  for (int i = 0; i < Controls::spectrumBandsCount; i++) {
+    if (controls.spectrumBands[i] < 10) {
+      Serial.print("    "); Serial.print(controls.rawSpectrumBands[i]);
+    } else if (controls.rawSpectrumBands[i] < 100) {
+      Serial.print("   "); Serial.print(controls.rawSpectrumBands[i]);
+    } else if (controls.rawSpectrumBands[i] < 1000) {
+      Serial.print("  "); Serial.print(controls.rawSpectrumBands[i]);
+    } else {
+      Serial.print(" "); Serial.print(controls.rawSpectrumBands[i]);
+    }
+  }
+  Serial.print(" * ");
+*/
+
+  for (int i = 0; i < Controls::spectrumBandsCount; i++) {
+    if (controls.spectrumBands[i] < 10) {
+      Serial.print("   ");
+      Serial.print(controls.spectrumBands[i]);
+    } else if (controls.spectrumBands[i] < 100) {
+      Serial.print("  ");
+      Serial.print(controls.spectrumBands[i]);
+    } else {
+      Serial.print(" ");
+      Serial.print(controls.spectrumBands[i]);
+    }
+  }
+  Serial.println();
 }
 
 void updateMasterBrightness() {
   uint8_t masterBrightness = map(analogRead(brightnessPotPin), 0, 1023, 0, 255);
   FastLED.setBrightness(masterBrightness);
-  Serial.print("brightness pot = "); Serial.println(masterBrightness);
+//  Serial.print("brightness pot = "); Serial.println(masterBrightness);
 }
 
 void updateButtonValues() {
@@ -154,9 +177,9 @@ void updateButtonValues() {
     downButton = false;
   }
 
-  Serial.print("control button = "); Serial.println(controls.button);
-  Serial.print("     up button = "); Serial.println(upButton);
-  Serial.print("   down button = "); Serial.println(downButton);
+//  Serial.print("control button = "); Serial.println(controls.button);
+//  Serial.print("     up button = "); Serial.println(upButton);
+//  Serial.print("   down button = "); Serial.println(downButton);
 }
 
 void updateCurrentPattern() {

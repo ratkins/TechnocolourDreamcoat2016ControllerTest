@@ -7,9 +7,13 @@
 #include "FastLED.h"
 
 struct Controls {
-    
+
     static const uint8_t spectrumBandsCount = 7;
-    uint16_t spectrumBands[spectrumBandsCount];
+    
+    uint16_t spectrumBandsTrim[spectrumBandsCount] = { 32, 96, 128, 128, 132, 132, 100 };
+    
+    uint16_t rawSpectrumBands[spectrumBandsCount];
+    uint8_t spectrumBands[spectrumBandsCount];
     
     bool button = false;
     
