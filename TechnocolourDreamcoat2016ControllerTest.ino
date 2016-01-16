@@ -6,9 +6,11 @@
 #include "Snake.h"
 #include "Life.h"
 #include "Starfield.h"
+#include "Perlin.h"
 
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
+
 CRGB leds[kNumLeds];
 
 const int analogPin = 14; // read from multiplexer using analog input 0
@@ -42,12 +44,14 @@ Starfield starfield(leds);
 Plasma plasma(leds);
 Snake snake(leds);
 Life life(leds);
+Perlin perlin(leds);
 
 Effect* effects[] = {
   &chase,
   &starfield,
   &snake,
   &life,
+  &perlin,
   &plasma,
   NULL
 };

@@ -36,7 +36,7 @@ public:
 //            return;
 //        }
         
-        if (frame++ == 1 || controls.button) {
+        if (frame++ == 1 || controls.button || controls.spectrumBands[0] > 128) {
             seed(random8(DENSITY));
         }
 
