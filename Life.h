@@ -30,13 +30,7 @@ public:
     void draw(Controls controls) {
       random16_add_entropy(controls.spectrumBands[0]);
       
-        // Skip every second frame otherwise we go too fast
-//        if (frame++ & 0x01) {
-//            copyToLedsArray(currState);
-//            return;
-//        }
-        
-        if (frame++ == 1 || controls.button || controls.spectrumBands[0] > 128) {
+        if (frame++ == 1 || controls.button) {
             seed(random8(DENSITY));
         }
 
