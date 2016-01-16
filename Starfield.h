@@ -41,9 +41,10 @@ class Starfield : public Effect {
             uint8_t actualPart = stars[i].x >> 8;
             uint8_t fractionalPart = stars[i].x & 0xFF;
             
-            Serial.println(); // Magic/More Magic
+//            Serial.print("XY("); Serial.print(actualPart); Serial.print(", "); Serial.print(stars[i].y); Serial.println(")");
+//            Serial.print("XY("); Serial.print(actualPart + 1); Serial.print(", "); Serial.print(stars[i].y); Serial.println(")");
             leds[XY(actualPart    , stars[i].y)] = CRGB(planes[stars[i].plane], planes[stars[i].plane], planes[stars[i].plane]) %= (0xFF - fractionalPart);
-            leds[XY(actualPart + 1, stars[i].y)] = CRGB(planes[stars[i].plane], planes[stars[i].plane], planes[stars[i].plane]) %= fractionalPart;
+            leds[XY(actualPart + 1 == kMatrixWidth ? 0 : actualPart + 1, stars[i].y)] = CRGB(planes[stars[i].plane], planes[stars[i].plane], planes[stars[i].plane]) %= fractionalPart;
         }
     }
 
