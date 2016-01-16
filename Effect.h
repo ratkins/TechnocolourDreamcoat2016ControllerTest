@@ -8,12 +8,12 @@
 
 struct Controls {
 
-    static const uint8_t spectrumBandsCount = 7;
+    static const uint8_t spectrumCount = 7;
     
-    uint16_t spectrumBandsTrim[spectrumBandsCount] = { 32, 96, 128, 128, 132, 132, 100 };
+    uint16_t spectrumTrim[spectrumCount] = { 32, 96, 128, 128, 132, 132, 100 };
     
-    uint16_t rawSpectrumBands[spectrumBandsCount];
-    uint8_t spectrumBands[spectrumBandsCount];
+    uint16_t spectrumRaw[spectrumCount];
+    uint8_t spectrum[spectrumCount];
     
     bool button = false;
     

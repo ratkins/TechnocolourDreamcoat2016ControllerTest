@@ -28,7 +28,7 @@ public:
     }
 
     void draw(Controls controls) {
-      random16_add_entropy(controls.spectrumBands[0]);
+      random16_add_entropy(controls.spectrum[0]);
       
         if (frame++ == 1 || controls.button) {
             seed(random8(DENSITY));

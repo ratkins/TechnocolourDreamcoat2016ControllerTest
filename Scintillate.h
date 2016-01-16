@@ -25,6 +25,12 @@ class Scintillate : public Effect {
     }
     
     virtual void draw(Controls controls) {
+        if (controls.button) {
+            soundReactive = !soundReactive;
+        }
+        if (controls.spectrum[0] > 192) {
+            brightness = 255;
+        }
         for (int i = 0; i < CONCURRENT_SPARKLES; i++) {
             if (sparkles[i].colourIndex == 0) {
                 if (random() > 128) {                  
@@ -37,8 +43,13 @@ class Scintillate : public Effect {
             } else {
                 sparkles[i].colourIndex++;
             }
-            leds[XY(sparkles[i].x, sparkles[i].y)] = CRGB(sparklePalette[sparkles[i].colourIndex]);
+            CRGB sparkle = CRGB(sparklePalette[sparkles[i].colourIndex]);
+            if (soundReactive) {
+                sparkle.nscale8(brightness);
+            }
+            leds[XY(sparkles[i].x, sparkles[i].y)] = sparkle;
         }
+        brightness = constrain(brightness - 48, 0, 255);
     }
     
 };

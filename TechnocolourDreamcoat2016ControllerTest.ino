@@ -117,42 +117,41 @@ void loop() {
 void updateSpectrumValues() {
   digitalWrite(resetPin, HIGH);
   digitalWrite(resetPin, LOW);  
-  for (int i = 0; i < Controls::spectrumBandsCount; i++) {
+  for (int i = 0; i < Controls::spectrumCount; i++) {
     digitalWrite(strobePin, LOW);
     delayMicroseconds(30); // to allow the output to settle
-    controls.rawSpectrumBands[i] = analogRead(analogPin);
-    controls.spectrumBands[i] = map(analogRead(analogPin), controls.spectrumBandsTrim[i], 1023, 0, 255);
+    controls.spectrumRaw[i] = analogRead(analogPin);
+    controls.spectrum[i] = map(analogRead(analogPin), controls.spectrumTrim[i], 1023, 0, 255);
     digitalWrite(strobePin, HIGH);
   }
 //  debugSpectrumValues();
 }
 
 void debugSpectrumValues() {
-/*
-  for (int i = 0; i < Controls::spectrumBandsCount; i++) {
-    if (controls.spectrumBands[i] < 10) {
-      Serial.print("    "); Serial.print(controls.rawSpectrumBands[i]);
-    } else if (controls.rawSpectrumBands[i] < 100) {
-      Serial.print("   "); Serial.print(controls.rawSpectrumBands[i]);
-    } else if (controls.rawSpectrumBands[i] < 1000) {
-      Serial.print("  "); Serial.print(controls.rawSpectrumBands[i]);
+
+  for (int i = 0; i < Controls::spectrumCount; i++) {
+    if (controls.spectrumRaw[i] < 10) {
+      Serial.print("    "); Serial.print(controls.spectrumRaw[i]);
+    } else if (controls.spectrumRaw[i] < 100) {
+      Serial.print("   "); Serial.print(controls.spectrumRaw[i]);
+    } else if (controls.spectrumRaw[i] < 1000) {
+      Serial.print("  "); Serial.print(controls.spectrumRaw[i]);
     } else {
-      Serial.print(" "); Serial.print(controls.rawSpectrumBands[i]);
+      Serial.print(" "); Serial.print(controls.spectrumRaw[i]);
     }
   }
   Serial.print(" * ");
-*/
 
-  for (int i = 0; i < Controls::spectrumBandsCount; i++) {
-    if (controls.spectrumBands[i] < 10) {
+  for (int i = 0; i < Controls::spectrumCount; i++) {
+    if (controls.spectrum[i] < 10) {
       Serial.print("   ");
-      Serial.print(controls.spectrumBands[i]);
-    } else if (controls.spectrumBands[i] < 100) {
+      Serial.print(controls.spectrum[i]);
+    } else if (controls.spectrum[i] < 100) {
       Serial.print("  ");
-      Serial.print(controls.spectrumBands[i]);
+      Serial.print(controls.spectrum[i]);
     } else {
       Serial.print(" ");
-      Serial.print(controls.spectrumBands[i]);
+      Serial.print(controls.spectrum[i]);
     }
   }
   Serial.println();
@@ -231,7 +230,7 @@ void updateCurrentPattern() {
 // Basic MSEQ7 output
 //  fadeToBlackBy(leds, kNumLeds, 16);
 //
-//  for (int y = 0; y < spectrumBands; y++) {
+//  for (int y = 0; y < spectrum; y++) {
 //    uint8_t vol = map(spectrumValue[y], 0, 1023, 0, 15);
 //    for (int x = 0; x < vol; x++) {
 //      leds[XY(vol, y)] = CRGB(255, 255, 255);

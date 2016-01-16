@@ -43,7 +43,7 @@ class Perlin : public Effect {
         if (controls.button) {
             ChangePalette();
         }
-        if (controls.spectrumBands[0] > 128 && funkyScale == 0) {
+        if (controls.spectrum[0] > 128 && funkyScale == 0) {
 //            Serial.println("Beat detected... ");
             funkyScale = 16;
         }
