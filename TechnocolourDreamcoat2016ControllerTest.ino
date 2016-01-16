@@ -7,6 +7,7 @@
 #include "Life.h"
 #include "Starfield.h"
 #include "Perlin.h"
+#include "Scintillate.h"
 
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
@@ -41,6 +42,7 @@ bool upButton = false;
 // Effects
 Chase chase(leds);
 Starfield starfield(leds);
+Scintillate scintillate(leds);
 Plasma plasma(leds);
 Snake snake(leds);
 Life life(leds);
@@ -49,6 +51,7 @@ Perlin perlin(leds);
 Effect* effects[] = {
   &chase,
   &starfield,
+  &scintillate,
   &snake,
   &life,
   &perlin,
