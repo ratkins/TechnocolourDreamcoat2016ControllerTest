@@ -31,7 +31,7 @@ class Animation22 : public Effect {
         for (int i = 0; i < MIDPOINT; i++) {
             fillHorizontal(i, leds[XY(0, i + 1)]);
         }
-        
+        blur2d(leds, kMatrixWidth, kMatrixHeight, 64);
     }
     
     void fillHorizontal(uint8_t y, CRGB colour) {
