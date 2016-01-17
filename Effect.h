@@ -29,4 +29,6 @@ class Effect {
     
     virtual void draw(Controls controls) = 0;
     
+    virtual bool blankEveryFrame() = 0;
+    
 };

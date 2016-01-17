@@ -84,5 +84,9 @@ class Snake : public Effect {
             leds[XY(pixels[i].x, pixels[i].y)] = colours[i] %= (255 - i * (255 / snakeLength));
         }
     }
+    
+    bool blankEveryFrame() {
+        return true;
+    }
 
 };

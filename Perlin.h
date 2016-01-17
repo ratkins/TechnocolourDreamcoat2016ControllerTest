@@ -212,4 +212,8 @@ class Perlin : public Effect {
         purple, purple, black,  black );
     }
 
+    bool blankEveryFrame() {
+        return true;
+    }
+
 };

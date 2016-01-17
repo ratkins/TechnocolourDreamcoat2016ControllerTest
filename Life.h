@@ -201,6 +201,10 @@ public:
         }      
     }
     
+    bool blankEveryFrame() {
+        return true;
+    }
+    
 };
 
 

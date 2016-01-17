@@ -8,6 +8,7 @@
 #include "Starfield.h"
 #include "Perlin.h"
 #include "Scintillate.h"
+#include "Animation22.h"
 
 const uint8_t ledPin = 0;
 const uint8_t maxPowerLedPin = 13;
@@ -47,6 +48,7 @@ Plasma plasma(leds);
 Snake snake(leds);
 Life life(leds);
 Perlin perlin(leds);
+Animation22 animation22(leds);
 
 Effect* effects[] = {
   &chase,
@@ -56,6 +58,7 @@ Effect* effects[] = {
   &life,
   &perlin,
   &plasma,
+  &animation22,
   NULL
 };
 uint8_t effectIndex = 0;
@@ -107,8 +110,9 @@ void loop() {
   updateButtonValues();
   updateCurrentPattern();
 
-  fill_solid(leds, kNumLeds, CRGB::Black);
-
+  if (effects[effectIndex]->blankEveryFrame()) {
+    fill_solid(leds, kNumLeds, CRGB::Black);
+  }
   effects[effectIndex]->draw(controls);
 
   FastLED.show();

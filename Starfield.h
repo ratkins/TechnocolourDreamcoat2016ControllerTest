@@ -47,6 +47,10 @@ class Starfield : public Effect {
             leds[XY(actualPart + 1 == kMatrixWidth ? 0 : actualPart + 1, stars[i].y)] = CRGB(planes[stars[i].plane], planes[stars[i].plane], planes[stars[i].plane]) %= fractionalPart;
         }
     }
+    
+    bool blankEveryFrame() {
+        return true;
+    }
 
 };
 

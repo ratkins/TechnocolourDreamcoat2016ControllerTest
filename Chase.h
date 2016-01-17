@@ -12,8 +12,12 @@ class Chase : public Effect {
   public:
     Chase(CRGB *leds) : Effect(leds), frame(0) {}
     
-    virtual void draw(Controls controls) {
+    void draw(Controls controls) {
         leds[frame++ % kNumLeds] = CRGB::White;
+    }
+    
+    bool blankEveryFrame() {
+        return true;
     }
     
 };

@@ -52,6 +52,10 @@ class Scintillate : public Effect {
         brightness = constrain(brightness - 48, 0, 255);
     }
     
+    bool blankEveryFrame() {
+        return true;
+    }
+    
 };
 
 
